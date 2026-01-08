@@ -1,33 +1,38 @@
-const express=require("express");
+const express = require("express");
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const path = require("path");
 
-const urlRoute=require("./routes/url");
-const staticRoute=require("./routes/staticRouter");
-const userRoute=require("./routes/user");
+const urlRoute = require("./routes/url");
+const staticRoute = require("./routes/staticRouter");
+const userRoute = require("./routes/user");
+const URL = require("./models/url");
 
-const {connectMongoDb}=require("./connection");
+const { restrictToLoggedInUserOnly, checkAuth } = require("./middlewares/auth");
 
-const URL=require("./models/url");
-const cookieParser=require("cookie-parser");
+const app = express();
+const PORT = process.env.PORT || 8001;
 
-const path=require("path");
-const app=express();
-const PORT=8001;
-//Connect
-connectMongoDb("mongodb://127.0.0.1:27017/short-url")
-    .then(()=>console.log("MongoDb connected"));
+const Mongo_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/short-url";
 
-app.set("view engine","ejs");
-app.set("views",path.resolve("./views"));
-//middleware
+mongoose.connect(Mongo_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log("MongoDB Error:", err));
+
+app.set("view engine", "ejs");
+app.set("views", path.resolve("./views"));
+
+// middleware
 app.use(express.json());
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-const {restrictToLoggedInUserOnly,checkAuth}=require("./middlewares/auth");
-//Route
-app.use("/url",restrictToLoggedInUserOnly,urlRoute);
-app.use("/user",userRoute);
-app.use("/",checkAuth,staticRoute);
 
+// routes
+app.use("/url", restrictToLoggedInUserOnly, urlRoute);
+app.use("/user", userRoute);
+app.use("/", checkAuth, staticRoute);
+
+// dynamic redirect route
 app.get("/:shortId", async (req, res) => {
   const shortId = req.params.shortId;
 
@@ -35,19 +40,15 @@ app.get("/:shortId", async (req, res) => {
     { shortId },
     {
       $push: {
-        visitHistory: {
-          timestamp: Date.now(),
-        },
-      },
+        visitHistory: { timestamp: Date.now() }
+      }
     },
-    { new: true } // optional but good
+    { new: true }
   );
 
-  if (!entry) {
-    return res.status(404).json({ error: "Short URL not found" });
-  }
+  if (!entry) return res.status(404).json({ error: "Short URL not found" });
 
   res.redirect(entry.redirectUrl);
 });
 
-app.listen(PORT,()=>console.log(`Server Started at PORT:${PORT}`));
+app.listen(PORT, () => console.log(`Server Started at PORT: ${PORT}`));
