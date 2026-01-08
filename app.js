@@ -13,7 +13,7 @@ const { restrictToLoggedInUserOnly, checkAuth } = require("./middlewares/auth");
 const app = express();
 const PORT = process.env.PORT || 8001;
 
-const Mongo_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/short-url";
+const Mongo_URI = process.env.Mongo_URI || "mongodb://127.0.0.1:27017/short-url";
 
 mongoose.connect(Mongo_URI)
   .then(() => console.log("MongoDB Connected"))
