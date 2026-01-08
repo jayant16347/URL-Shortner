@@ -172,14 +172,15 @@
       <button type="submit">Generate</button>
     </form>
 
-    <% if (locals.id) { %>
-      <div class="generated-url">
-        URL Generated:
-        <a href="http://localhost:8001/<%= id %>" target="_blank">
-          http://localhost:8001/<%= id %>
-        </a>
-      </div>
-    <% } %>
+ <% if (id) { %>
+  <div class="generated-url">
+    URL Generated:
+    <a href="<%= `${req.protocol}://${req.get('host')}/${id}` %>" target="_blank">
+      <%= `${req.protocol}://${req.get('host')}/${id}` %>
+    </a>
+  </div>
+<% } %>
+
 
     <% if (locals.urls && urls.length > 0) { %>
       <table>

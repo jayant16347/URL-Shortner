@@ -13,8 +13,11 @@ async function generateNewShortUrl(req,res){
             visitHistory:[],
             createdBy:req.user._id,
         });
+         const allUrls = await URL.find({});
       return res.render("home",{
-        id:shortId,
+         id: shortId,
+        urls: allUrls,
+        req: req
       });
 }
 async function handleGetAnalytics(req,res) {
