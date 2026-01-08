@@ -7,15 +7,16 @@ async function generateNewShortUrl(req,res){
         const body=req.body;
         if(!body.url) return res.status(400).json({error:"url is required"});
         const shortId=nanoid(8);  
-        let redirect = body.url;
+         let redirect = body.url;
 
-    // 👇 If no http or https, prefix https://
-     if (!redirect.startsWith("http://") && !redirect.startsWith("https://")) {
-    redirect = "https://" + redirect;
-    }
+        // If user did not include http/https, add https://
+        if (!redirect.startsWith("http://") && !redirect.startsWith("https://")) {
+        redirect = "https://" + redirect;
+        }
+
         await URL.create({
             shortId:shortId,
-            redirectUrl:body.url,
+            redirectUrl:redirect,
             visitHistory:[],
             createdBy:req.user._id,
         });
