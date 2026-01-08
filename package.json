@@ -5,10 +5,10 @@
   "license": "ISC",
   "author": "",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index",
-    "dev":"nodemon app"
+    "start": "node app",
+    "dev": "nodemon app"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
@@ -17,7 +17,9 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.0",
     "nanoid": "^5.1.6",
-    "nodemon": "^3.1.11",
     "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }
