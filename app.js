@@ -31,7 +31,7 @@ app.use(cookieParser());
 app.use("/url", restrictToLoggedInUserOnly, urlRoute);
 app.use("/user", userRoute);
 app.use("/", checkAuth, staticRoute);
-
+app.use(express.static("public"));
 // dynamic redirect route
 app.get("/:shortId", async (req, res) => {
   const shortId = req.params.shortId;
